@@ -11,15 +11,15 @@ html
         section 
             div(class="container") 
                 h1= "Bitte scannen Sie den QR Code"
-                p(id="uuid")= uuid
                 div(id="qr")
+                p(id="uuid")= uuid
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
 script.
   const uuid = document.getElementById("uuid").innerHTML
   const url = "https://mvp-persunf.azurewebsites.net/form/" + uuid
   const qrCode = new QRCodeStyling({
-    width: 300,
-    height: 300,
+    width: 280,
+    height: 280,
     data: url,
     image: "https://mvppersunf.blob.core.windows.net/images/Logo-Schweiz.png",
     dotsOptions: {
@@ -36,7 +36,7 @@ style.
         text-align: right;
     }
     img {
-        width: 15em;
+        width: 12em;
     }
     p {
         color: gray
