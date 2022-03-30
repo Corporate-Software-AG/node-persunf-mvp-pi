@@ -12,8 +12,7 @@ html
             div(class="container") 
                 h1= "QR"
                 p(id="uuid")= uuid
-                a(href="https://mvp-persunf.azurewebsites.net/form/" + uuid) 
-                    div(id="qr")
+                div(id="qr")
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
 script.
   const uuid = document.getElementById("uuid").innerHTML
@@ -37,5 +36,5 @@ style.
         text-align: right;
     }
     img {
-        max-width: 100%;
+        width: 10em;
     }
