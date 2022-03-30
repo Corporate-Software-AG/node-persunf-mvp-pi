@@ -10,7 +10,7 @@ html
                     img(src="https://mvppersunf.blob.core.windows.net/images/Logo-Schweizerische-Eidgenossenschaft.png")
         section 
             div(class="container") 
-                h1= "QR"
+                h1= "Bitte scannen Sie den QR Code"
                 p(id="uuid")= uuid
                 div(id="qr")
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
@@ -18,8 +18,8 @@ script.
   const uuid = document.getElementById("uuid").innerHTML
   const url = "https://mvp-persunf.azurewebsites.net/form/" + uuid
   const qrCode = new QRCodeStyling({
-    width: 400,
-    height: 400,
+    width: 300,
+    height: 300,
     data: url,
     image: "https://mvppersunf.blob.core.windows.net/images/Logo-Schweiz.png",
     dotsOptions: {
@@ -36,5 +36,8 @@ style.
         text-align: right;
     }
     img {
-        width: 10em;
+        width: 15em;
+    }
+    p {
+        color: gray
     }
