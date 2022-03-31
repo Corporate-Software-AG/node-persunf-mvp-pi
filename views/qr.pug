@@ -16,6 +16,8 @@ html
                 p(id="uuid")= "ID: " + uuid
                 p Für neuen Code bitte auf den QR Code tippen
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
+        script(src='test.js')
+
 script.
     const uuid = document.getElementById("uuid").innerHTML
     const url = "https://mvp-persunf.azurewebsites.net/form/" + uuid
