@@ -16,7 +16,6 @@ html
                 p(id="uuid")= "ID: " + uuid
                 p Für neuen Code bitte auf den QR Code tippen
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
-        script(src='test.js')
 
 script.
     const uuid = document.getElementById("uuid").innerHTML
@@ -32,6 +31,25 @@ script.
         },
     });
     qrCode.append(document.getElementById("qr"));
+
+    function checkStatusAndRedirect() {
+        fetch('/status')
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            if( data.complete) {
+                window.location.replace("/");
+            };
+        }).catch((err) => console.warn('Something went wrong.', err));
+    }
+
+    function loop() {         
+        setTimeout(() => {   
+            checkStatusAndRedirect()
+            loop();
+        }, 1000)
+    }
+    loop();
 
 style. 
     .container {

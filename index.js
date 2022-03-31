@@ -18,6 +18,10 @@ app.get('/qr', (req, res) => {
     res.render("qr", { title: "POC QR", uuid: short.generate() });
 })
 
+app.get('/status', (req, res) => {
+    res.json({"complete": false});
+})
+
 app.listen(port, () => {
     console.log(`This app is listening at http://localhost:${port}`)
 })
