@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/Corporate-Software-AG/node-persunf-mvp-pi#readme",
   "dependencies": {
+    "azure-iot-device": "^1.17.8",
+    "azure-iot-device-amqp": "^1.13.8",
+    "azure-iot-device-mqtt": "^1.15.8",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "pug": "^3.0.2",
