@@ -10,15 +10,16 @@ app.use('/favicon.ico', express.static('favicon.ico'));
 
 app.use(express.urlencoded());
 
+let state = { "complete": false }
+
 app.get('/', (req, res) => {
     res.render("home", { title: "POC Home" });
 })
 
 app.get('/qr', (req, res) => {
+    state = { "complete": false }
     res.render("qr", { title: "POC QR", uuid: short.generate() });
 })
-
-let state = { "complete": false }
 
 app.get('/status', (req, res) => {
     res.json(state);
