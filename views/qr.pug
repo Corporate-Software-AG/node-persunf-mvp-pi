@@ -16,7 +16,7 @@ html
                 p(id="uuid")= "ID: " + uuid
                 p Für neuen Code bitte auf den QR Code tippen
 
-            img#cosologo(src="https://cosoweb.blob.core.windows.net/images/logo.png")
+                img#cosologo(src="https://cosoweb.blob.core.windows.net/images/logo.png")
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
 
 script.
@@ -55,9 +55,9 @@ script.
 
 style.
     #cosologo {
-        position: fix;
-        bottom:0;
-        left: 0;
+        position: fixed;
+        bottom:.5em;
+        left: .5em;
         width: 12em;
     }
     .container {
