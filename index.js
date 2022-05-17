@@ -10,6 +10,12 @@ app.use('/favicon.ico', express.static('favicon.ico'));
 
 app.use(express.urlencoded());
 
+let deviceId = process.env.DEVICE_ID;
+if (!deviceId) {
+    console.log('Please set the DEVICE_ID environment variable.');
+    process.exit(-1);
+}
+
 let state = { "complete": false }
 
 app.get('/', (req, res) => {
@@ -18,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.get('/qr', (req, res) => {
     state = { "complete": false }
-    res.render("qr", { title: "POC QR", uuid: short.generate() });
+    res.render("qr", { title: "POC QR", uuid: short.generate(), deviceId: deviceId });
 })
 
 app.get('/status', (req, res) => {
@@ -37,6 +43,8 @@ if (!connectionString) {
     console.log('Please set the DEVICE_CONNECTION_STRING environment variable.');
     process.exit(-1);
 }
+
+
 var client = Client.fromConnectionString(connectionString, Protocol);
 
 client.open(function (err) {
@@ -49,8 +57,6 @@ client.open(function (err) {
         });
 
         client.onDeviceMethod('onQrAcknowledged', function (request, response) {
-            console.log(request.payload);
-
             state = request.payload;
 
             var responsePayload = {

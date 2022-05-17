@@ -13,15 +13,17 @@ html
                 h1= "Bitte scannen Sie den QR Code"
                 a(href="/qr")
                     div(id="qr")
-                p(id="uuid")= "ID: " + uuid
                 p Für neuen Code bitte auf den QR Code tippen
 
                 img#cosologo(src="https://cosoweb.blob.core.windows.net/images/logo.png")
+        p(id="uuid")= uuid
+        p(id="deviceId")= deviceId
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
 
 script.
     const uuid = document.getElementById("uuid").innerHTML
-    const url = "https://mvp-persunf.azurewebsites.net/form/" + uuid
+    const deviceId = document.getElementById("deviceId").innerHTML
+    const url = "https://mvp-persunf.azurewebsites.net/form/de/" + uuid + "?deviceId=" + deviceId
     const qrCode = new QRCodeStyling({
         width: 280,
         height: 280,
@@ -59,6 +61,10 @@ style.
         bottom:.5em;
         left: .5em;
         width: 12em;
+    }
+    #uuid,
+    #deviceId {
+        display: none;
     }
     .container {
         text-align: center
