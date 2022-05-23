@@ -16,14 +16,16 @@ html
                 p Für neuen Code bitte auf den QR Code tippen
 
                 img#cosologo(src="https://cosoweb.blob.core.windows.net/images/logo.png")
-        p(id="uuid")= uuid
-        p(id="deviceId")= deviceId
+        p(id="deviceId")= device.id
+        p(id="deviceVerificationCode")= device.verificationCode
+        p(id="deviceLocation")= device.location
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
 
 script.
-    const uuid = document.getElementById("uuid").innerHTML
+    const deviceVerificationCode = document.getElementById("deviceVerificationCode").innerHTML
     const deviceId = document.getElementById("deviceId").innerHTML
-    const url = "https://mvp-persunf.azurewebsites.net/form/de/" + uuid + "?deviceId=" + deviceId
+    const deviceLocation = document.getElementById("deviceLocation").innerHTML
+    const url = "https://mvp-persunf.azurewebsites.net/form/" + "?deviceId=" + deviceId + "&location=" + deviceLocation + "&verification=" + deviceVerificationCode  
     const qrCode = new QRCodeStyling({
         width: 280,
         height: 280,
@@ -41,8 +43,8 @@ script.
         .then((response) => response.json())
         .then((data) => {
             console.log(data);
-            if( data.complete) {
-                window.location.replace("/");
+            if( data != deviceVerificationCode) {
+                window.location.reload();
             };
         }).catch((err) => console.warn('Something went wrong.', err));
     }
@@ -62,8 +64,9 @@ style.
         left: .5em;
         width: 12em;
     }
-    #uuid,
-    #deviceId {
+    #deviceVerificationCode,
+    #deviceId,
+    #deviceLocation {
         display: none;
     }
     .container {

@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 8080;
 const path = require('path');
-const short = require('short-uuid');
+const Protocol = require('azure-iot-device-amqp').Amqp;
+const Client = require('azure-iot-device').Client;
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
@@ -10,66 +11,58 @@ app.use('/favicon.ico', express.static('favicon.ico'));
 
 app.use(express.urlencoded());
 
-let deviceId = process.env.DEVICE_ID;
-if (!deviceId) {
-    console.log('Please set the DEVICE_ID environment variable.');
+const connectionString = process.env.DEVICE_CONNECTION_STRING;
+
+if (!connectionString) {
+    console.log('Configuration incomplete! Set the DEVICE_CONNECTION_STRING environment variables.');
     process.exit(-1);
 }
 
-let state = { "complete": false }
+let deviceId = connectionString.split(";").filter((e) => e.startsWith("DeviceId="))[0].substring("DeviceId=".length);
+
+let deviceConfig = {
+    id: deviceId,
+    location: "",
+    verificationCode: ""
+}
 
 app.get('/', (req, res) => {
-    res.render("home", { title: "POC Home" });
-})
-
-app.get('/qr', (req, res) => {
     state = { "complete": false }
-    res.render("qr", { title: "POC QR", uuid: short.generate(), deviceId: deviceId });
+    res.render("qr", { title: "POC QR", device: deviceConfig });
 })
 
 app.get('/status', (req, res) => {
-    res.json(state);
+    res.json(deviceConfig.verificationCode);
 })
 
 app.listen(port, () => {
     console.log(`This app is listening at http://localhost:${port}`)
 })
 
-var Protocol = require('azure-iot-device-amqp').Amqp;
-var Client = require('azure-iot-device').Client;
-
-var connectionString = process.env.DEVICE_CONNECTION_STRING;
-if (!connectionString) {
-    console.log('Please set the DEVICE_CONNECTION_STRING environment variable.');
-    process.exit(-1);
-}
-
-
-var client = Client.fromConnectionString(connectionString, Protocol);
-
-client.open(function (err) {
-    if (err) {
-        console.error(err.toString());
+let client = Client.fromConnectionString(connectionString, Protocol);
+client.open((error) => {
+    if (error) {
+        console.error(error);
     } else {
         console.log('client successfully connected to iot hub');
-        client.on('error', function (err) {
-            console.error(err.toString());
-        });
 
-        client.onDeviceMethod('onQrAcknowledged', function (request, response) {
-            state = request.payload;
+        client.getTwin((error, twin) => {
+            if (error) {
+                console.error('could not get twin')
+                process.exit(-1)
+            } else {
+                console.log('twin created');
+                twin.on('properties.desired', (delta) => {
+                    console.log('desired properties received:', JSON.stringify(delta));
+                    deviceConfig.location = delta.mzr;
+                    deviceConfig.verificationCode = delta.verificationCode
+                });
+            }
+        })
 
-            var responsePayload = {
-                message: 'message received'
-            };
-
-            response.send(200, responsePayload, function (err) {
-                if (err) {
-                    console.error('Unable to send method response: ' + err.toString());
-                } else {
-                    console.log('response to onQrAcknowledged sent.');
-                }
-            });
+        client.on('error', (error) => {
+            console.error(error);
+            process.exit(-1)
         });
     }
 });
