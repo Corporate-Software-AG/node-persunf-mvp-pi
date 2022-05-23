@@ -25,7 +25,7 @@ script.
     const deviceVerificationCode = document.getElementById("deviceVerificationCode").innerHTML
     const deviceId = document.getElementById("deviceId").innerHTML
     const deviceLocation = document.getElementById("deviceLocation").innerHTML
-    const url = "https://mvp-persunf.azurewebsites.net/form/" + "?deviceId=" + deviceId + "&location=" + deviceLocation + "&verification=" + deviceVerificationCode  
+    const url = "https://mvp-persunf.azurewebsites.net/" + "?deviceId=" + deviceId + "&deviceLocation=" + deviceLocation + "&verificationCode=" + deviceVerificationCode  
     const qrCode = new QRCodeStyling({
         width: 280,
         height: 280,
