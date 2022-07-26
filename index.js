@@ -9,7 +9,7 @@ app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 app.use('/favicon.ico', express.static('favicon.ico'));
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 const connectionString = process.env.DEVICE_CONNECTION_STRING;
 
