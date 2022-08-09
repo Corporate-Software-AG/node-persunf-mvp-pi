@@ -26,8 +26,6 @@ let deviceConfig = {
     verificationCode: ""
 }
 
-
-
 app.get('/', (req, res) => {
     state = { "complete": false }
     res.render("qr", { title: "POC QR", device: deviceConfig });
@@ -39,8 +37,20 @@ app.get('/status', (req, res) => {
 
 app.listen(port, async () => {
     console.log(`This app is listening at http://localhost:${port}`)
-    let isConnected = !!await require('dns').promises.resolve('google.com').catch(() => { });
+    let isConnected = !!await require('dns').promises.resolve('azure.com').catch(() => { });
     console.log("Connected to Internet: ", isConnected)
+
+    var exec = require('child_process').exec, child;
+    child = exec('sudo qmicli -d /dev/cdc-wdm0 --dms-get-operating-mode', (error, stdout, stderr) => {
+        if (error !== null) {
+            console.log("Not available")
+            console.log(error)
+        } else {
+            console.log("Available")
+            console.log("Stdout", stdout)
+            console.log("Stderr", stderr)
+        }
+    });
 })
 
 let client = Client.fromConnectionString(connectionString, Protocol);
