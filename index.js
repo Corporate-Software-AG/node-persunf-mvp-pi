@@ -26,6 +26,9 @@ let deviceConfig = {
     verificationCode: ""
 }
 
+let isConnected = !!await require('dns').promises.resolve('google.com').catch(() => { });
+console.log("Connected to Internet: ", isConnected)
+
 app.get('/', (req, res) => {
     state = { "complete": false }
     res.render("qr", { title: "POC QR", device: deviceConfig });
