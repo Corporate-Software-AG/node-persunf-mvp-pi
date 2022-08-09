@@ -26,8 +26,7 @@ let deviceConfig = {
     verificationCode: ""
 }
 
-let isConnected = !!await require('dns').promises.resolve('google.com').catch(() => { });
-console.log("Connected to Internet: ", isConnected)
+
 
 app.get('/', (req, res) => {
     state = { "complete": false }
@@ -38,8 +37,10 @@ app.get('/status', (req, res) => {
     res.json(deviceConfig.verificationCode);
 })
 
-app.listen(port, () => {
+app.listen(port, async () => {
     console.log(`This app is listening at http://localhost:${port}`)
+    let isConnected = !!await require('dns').promises.resolve('google.com').catch(() => { });
+    console.log("Connected to Internet: ", isConnected)
 })
 
 let client = Client.fromConnectionString(connectionString, Protocol);
