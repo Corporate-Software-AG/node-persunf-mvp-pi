@@ -162,20 +162,38 @@ async function startFullScreenApp() {
 
 function sendStartupLog() {
     let filePath = "/home/armasuisse/logs/servicestart.log";
-    console.log("Upload file: ", filePath);
+    let errorFilePath = "/home/armasuisse/logs/error.log";
     let client = Client.fromConnectionString(connectionString, Protocol);
+
     fs.stat(filePath, (err, fileStats) => {
+        console.log("Upload file: ", filePath);
         if (err) {
             console.error('could not read file: ' + err.toString());
         } else {
             let fileStream = fs.createReadStream(filePath);
-
             client.uploadToBlob(Date.now() + '.log', fileStream, fileStats.size, function (err, result) {
                 fileStream.destroy();
                 if (err) {
                     console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
                 } else {
-                    console.log('Upload successful - ' + result);
+                    console.log('Upload successful');
+                }
+            });
+        }
+    });
+
+    fs.stat(errorFilePath, (err, fileStats) => {
+        console.log("Upload Error file: ", errorFilePath);
+        if (err) {
+            console.error('could not read file: ' + err.toString());
+        } else {
+            let errorFileStream = fs.createReadStream(errorFilePath);
+            client.uploadToBlob(Date.now() + '-error.log', errorFileStream, fileStats.size, function (err, result) {
+                fileStream.destroy();
+                if (err) {
+                    console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
+                } else {
+                    console.log('Upload successful');
                 }
             });
         }
