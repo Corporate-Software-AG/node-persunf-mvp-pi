@@ -55,8 +55,8 @@ app.listen(port, async () => {
         await setupCellular();
     }
     startIotHubClient();
-    console.log("----------------------------- COMPLETE " + new Date().toISOString() + " -----------------------------")
-    uploadLogs();
+    console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
+    await uploadLogs();
     await startFullScreenApp();
 });
 
@@ -147,10 +147,10 @@ function startIotHubClient() {
                 });
             });
 
-            client.onDeviceMethod('onUploadLogs', (request, response) => {
+            client.onDeviceMethod('onUploadLogs', async (request, response) => {
                 console.log('received a request for onUploadLogs');
                 try {
-                    uploadLogs();
+                    await uploadLogs();
                     response.send(200, { "result": true }, (err) => {
                         if (err) {
                             console.error('Unable to send method response: ' + err.toString());
@@ -184,12 +184,23 @@ async function startFullScreenApp() {
     await execCommands(commands);
 }
 
-function uploadLogs() {
+async function cleanLogFiles() {
+    let commands = [
+        'rm /home/armasuisse/logs/error.log',
+        'touch /home/armasuisse/logs/error.log',
+        'rm /home/armasuisse/logs/servicestart.log',
+        'touch /home/armasuisse/logs/servicestart.log'
+    ]
+    await execCommands(commands);
+}
+
+async function uploadLogs() {
     let filePath = "/home/armasuisse/logs/servicestart.log";
     let errorFilePath = "/home/armasuisse/logs/error.log";
     let client = Client.fromConnectionString(connectionString, Protocol);
     uploadLogFile(client, filePath, "-startup")
     uploadLogFile(client, errorFilePath, "-error")
+    await cleanLogFiles();
 }
 
 function uploadLogFile(client, filePath, postfix) {
