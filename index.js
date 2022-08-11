@@ -47,6 +47,7 @@ app.get('/status', (req, res) => {
 })
 
 app.listen(port, async () => {
+    console.log(`----------------------------- START ${new Date().toISOString()} -----------------------------`)
     console.log(`This app is listening at http://localhost:${port}`)
     let isConnected = !!await require('dns').promises.resolve('azure.com').catch(() => { });
     console.log("Connected to Internet: ", isConnected)
@@ -54,7 +55,7 @@ app.listen(port, async () => {
         await setupCellular();
     }
     startIotHubClient();
-    console.log("----------------------------- SETUP COMPLETE -----------------------------")
+    console.log(`----------------------------- COMPLETE ${new Date().toISOString()} -----------------------------`)
     uploadLogs();
     await startFullScreenApp();
 });
@@ -148,14 +149,25 @@ function startIotHubClient() {
 
             client.onDeviceMethod('onUploadLogs', (request, response) => {
                 console.log('received a request for onUploadLogs');
-                uploadLogs();
-                response.send(200, { "result": true }, (err) => {
-                    if (err) {
-                        console.error('Unable to send method response: ' + err.toString());
-                    } else {
-                        console.log('response to onUploadLogs sent.');
-                    }
-                });
+                try {
+                    uploadLogs();
+                    response.send(200, { "result": true }, (err) => {
+                        if (err) {
+                            console.error('Unable to send method response: ' + err.toString());
+                        } else {
+                            console.log('response to onUploadLogs sent.');
+                        }
+                    });
+                } catch (e) {
+                    response.send(200, { "result": false, "message": e.message }, (err) => {
+                        if (err) {
+                            console.error('Unable to send method response: ' + err.toString());
+                        } else {
+                            console.log('response to onUploadLogs sent.');
+                        }
+                    });
+                }
+
             });
 
             client.on('error', (error) => {
