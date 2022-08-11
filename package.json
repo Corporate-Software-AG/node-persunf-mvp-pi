@@ -22,6 +22,7 @@
     "azure-iot-device-mqtt": "^1.16.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "fs": "^0.0.1-security",
     "pug": "^3.0.2",
     "short-uuid": "^4.2.0"
   }

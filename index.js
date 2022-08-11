@@ -6,6 +6,8 @@ const Protocol = require('azure-iot-device-amqp').Amqp;
 const Client = require('azure-iot-device').Client;
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const fs = require('fs');
+
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
@@ -54,7 +56,7 @@ app.listen(port, async () => {
 
     startIotHubClient();
     await startFullScreenApp();
-
+    await sendStartupLog();
 });
 
 async function setupCellular() {
@@ -77,19 +79,6 @@ async function setupCellular() {
     }
 
 }
-
-async function getStatus() {
-    const com = 'sudo qmicli -d /dev/cdc-wdm0 --dms-get-operating-mode';
-    try {
-        let execOut = execCommand(com);
-        return execOut.split("\n\t")[1].split("'")[1];
-    } catch (e) {
-        console.log("Retry", e);
-        sleep(1000);
-        return execCommand(com);
-    }
-}
-
 
 async function execCommands(commands) {
     for (let com of commands) {
@@ -146,6 +135,17 @@ function startIotHubClient() {
                 }
             })
 
+            client.onDeviceMethod('onHealthCheck', (request, response) => {
+                console.log('received a request for onHealthCheck');
+                response.send(200, { "result": true }, (err) => {
+                    if (err) {
+                        console.error('Unable to send method response: ' + err.toString());
+                    } else {
+                        console.log('response to onHealthCheck sent.');
+                    }
+                });
+            });
+
             client.on('error', (error) => {
                 console.error(error);
             });
@@ -158,6 +158,27 @@ async function startFullScreenApp() {
         'chromium-browser --kiosk http://localhost:8080 --no-sandbox'
     ]
     await execCommands(commands);
+}
+
+async function sendStartupLog() {
+    let filePath = "/home/armasuisse/logs/servicestart.log";
+    let client = Client.fromConnectionString(connectionString, Protocol);
+    fs.stat(filePath, (err, fileStats) => {
+        if (err) {
+            console.error('could not read file: ' + err.toString());
+        } else {
+            let fileStream = fs.createReadStream(filePath);
+
+            client.uploadToBlob('testblob.log', fileStream, fileStats.size, function (err, result) {
+                fileStream.destroy();
+                if (err) {
+                    console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
+                } else {
+                    console.log('Upload successful - ' + result);
+                }
+            });
+        }
+    });
 }
 
 function sleep(ms) {
