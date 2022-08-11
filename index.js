@@ -55,8 +55,8 @@ app.listen(port, async () => {
     }
 
     startIotHubClient();
-    sendStartupLog();
     await startFullScreenApp();
+    sendStartupLog();
 });
 
 async function setupCellular() {
@@ -170,7 +170,7 @@ function sendStartupLog() {
         } else {
             let fileStream = fs.createReadStream(filePath);
 
-            client.uploadToBlob('testblob.log', fileStream, fileStats.size, function (err, result) {
+            client.uploadToBlob(Date.now() + '.log', fileStream, fileStats.size, function (err, result) {
                 fileStream.destroy();
                 if (err) {
                     console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
