@@ -121,7 +121,7 @@ function startIotHubClient() {
         if (error) {
             console.error(error);
         } else {
-            console.log('client successfully connected to iot hub');
+            console.log("----------------------------- CONNECTED TO IOT HUB " + new Date().toISOString() + " -----------------------------")
 
             client.getTwin((error, twin) => {
                 if (error) {
