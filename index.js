@@ -55,8 +55,8 @@ app.listen(port, async () => {
     }
 
     startIotHubClient();
+    sendStartupLog();
     await startFullScreenApp();
-    await sendStartupLog();
 });
 
 async function setupCellular() {
@@ -160,7 +160,7 @@ async function startFullScreenApp() {
     await execCommands(commands);
 }
 
-async function sendStartupLog() {
+function sendStartupLog() {
     let filePath = "/home/armasuisse/logs/servicestart.log";
     let client = Client.fromConnectionString(connectionString, Protocol);
     fs.stat(filePath, (err, fileStats) => {
