@@ -162,6 +162,7 @@ async function startFullScreenApp() {
 
 function sendStartupLog() {
     let filePath = "/home/armasuisse/logs/servicestart.log";
+    console.log("Upload file: ", filePath);
     let client = Client.fromConnectionString(connectionString, Protocol);
     fs.stat(filePath, (err, fileStats) => {
         if (err) {
