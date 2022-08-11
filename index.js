@@ -56,7 +56,7 @@ app.listen(port, async () => {
 
     startIotHubClient();
     await startFullScreenApp();
-    sendStartupLog();
+    uploadLogs();
 });
 
 async function setupCellular() {
@@ -146,6 +146,18 @@ function startIotHubClient() {
                 });
             });
 
+            client.onDeviceMethod('onUploadLogs', (request, response) => {
+                console.log('received a request for onUploadLogs');
+                uploadLogs();
+                response.send(200, { "result": true }, (err) => {
+                    if (err) {
+                        console.error('Unable to send method response: ' + err.toString());
+                    } else {
+                        console.log('response to onHealthCheck sent.');
+                    }
+                });
+            });
+
             client.on('error', (error) => {
                 console.error(error);
             });
@@ -160,7 +172,7 @@ async function startFullScreenApp() {
     await execCommands(commands);
 }
 
-function sendStartupLog() {
+function uploadLogs() {
     let filePath = "/home/armasuisse/logs/servicestart.log";
     let errorFilePath = "/home/armasuisse/logs/error.log";
     let client = Client.fromConnectionString(connectionString, Protocol);
