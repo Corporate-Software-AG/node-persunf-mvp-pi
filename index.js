@@ -155,8 +155,7 @@ function startIotHubClient() {
 
 async function startFullScreenApp() {
     let commands = [
-        'export DISPLAY=unix:0.0',
-        'chromium-browser --kiosk http://localhost:8080'
+        'chromium-browser --kiosk http://localhost:8080 --no-sandbox'
     ]
     await execCommands(commands);
 }
