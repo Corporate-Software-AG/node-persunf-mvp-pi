@@ -47,7 +47,7 @@ app.get('/status', (req, res) => {
 })
 
 app.listen(port, async () => {
-    console.log(`----------------------------- START ${new Date().toISOString()} -----------------------------`)
+    console.log("----------------------------- START " + new Date().toISOString() + " -----------------------------")
     console.log(`This app is listening at http://localhost:${port}`)
     let isConnected = !!await require('dns').promises.resolve('azure.com').catch(() => { });
     console.log("Connected to Internet: ", isConnected)
@@ -55,7 +55,7 @@ app.listen(port, async () => {
         await setupCellular();
     }
     startIotHubClient();
-    console.log(`----------------------------- COMPLETE ${new Date().toISOString()} -----------------------------`)
+    console.log("----------------------------- COMPLETE " + new Date().toISOString() + " -----------------------------")
     uploadLogs();
     await startFullScreenApp();
 });
@@ -127,9 +127,9 @@ function startIotHubClient() {
                 if (error) {
                     console.error('could not get twin')
                 } else {
-                    console.log('twin created');
+                    console.log("----------------------------- TWIN CREATED " + new Date().toISOString() + " -----------------------------")
                     twin.on('properties.desired', (delta) => {
-                        console.log('desired properties received:', JSON.stringify(delta));
+                        console.log('TWIN Properties:', JSON.stringify(delta));
                         deviceConfig.location = delta.mzr;
                         deviceConfig.verificationCode = delta.verificationCode
                     });
@@ -137,7 +137,7 @@ function startIotHubClient() {
             })
 
             client.onDeviceMethod('onHealthCheck', (request, response) => {
-                console.log('received a request for onHealthCheck');
+                console.log("------ HEALTH CHECK " + new Date().toISOString() + " ----------------------------------------------------")
                 response.send(200, { "result": true }, (err) => {
                     if (err) {
                         console.error('Unable to send method response: ' + err.toString());
