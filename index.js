@@ -204,7 +204,7 @@ function uploadLogFile(client, filePath, postfix) {
                 if (err) {
                     console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
                 } else {
-                    console.log('Upload successful');
+                    console.log('Upload successful: ', filePath);
                 }
             });
         }
