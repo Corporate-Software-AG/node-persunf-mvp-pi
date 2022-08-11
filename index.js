@@ -53,10 +53,10 @@ app.listen(port, async () => {
     if (!isConnected) {
         await setupCellular();
     }
-
     startIotHubClient();
-    await startFullScreenApp();
+    console.log("----------------------------- SETUP COMPLETE -----------------------------")
     uploadLogs();
+    await startFullScreenApp();
 });
 
 async function setupCellular() {
@@ -153,7 +153,7 @@ function startIotHubClient() {
                     if (err) {
                         console.error('Unable to send method response: ' + err.toString());
                     } else {
-                        console.log('response to onHealthCheck sent.');
+                        console.log('response to onUploadLogs sent.');
                     }
                 });
             });
