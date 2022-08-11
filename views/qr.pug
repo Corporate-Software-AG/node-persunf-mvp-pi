@@ -7,7 +7,7 @@ html
         header 
             .container.p-3
                 p.logo
-                    img(src="images/Logo-Schweizerische-Eidgenossenschaft.png")
+                    img(src="https://mvppersunf.blob.core.windows.net/images/Logo-Schweizerische-Eidgenossenschaft.png")
         section 
             div(class="container") 
                 h2= "Bitte scannen Sie den QR Code"
@@ -15,7 +15,7 @@ html
                 h2= "Si prega di scansionare il codice QR"
                 div(id="qr")
 
-                img#cosologo(src="images/Logo-CoSo.png")
+                img#cosologo(src="https://cosoweb.blob.core.windows.net/images/logo.png")
         p(id="deviceId")= device.id
         p(id="deviceVerificationCode")= device.verificationCode
         p(id="deviceLocation")= device.location
@@ -30,7 +30,7 @@ script.
         width: 280,
         height: 280,
         data: url,
-        image: "images/Logo-Schweiz.png",
+        image: "https://mvppersunf.blob.core.windows.net/images/Logo-Schweiz.png",
         dotsOptions: {
         color: "#ff0000",
         type: "dots"
