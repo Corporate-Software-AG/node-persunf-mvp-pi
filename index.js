@@ -166,7 +166,6 @@ function startIotHubClient() {
                 try {
                     let stout = await execCommand('/usr/bin/git -C /home/armasuisse/node-persunf-mvp-pi pull');
                     response.send(200, { "result": true, "message": stout }, (err) => err ? console.log('response to onCommand sent.') : console.error('Unable to send method response: ' + err.toString()));
-                    await execCommand('sudo reboot');
                 } catch (e) {
                     response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onCommand sent.') : console.error('Unable to send method response: ' + err.toString()));
                 }
