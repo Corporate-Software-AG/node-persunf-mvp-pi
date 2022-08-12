@@ -167,7 +167,28 @@ function startIotHubClient() {
                         }
                     });
                 }
+            });
 
+            client.onDeviceMethod('onCommand', async (request, response) => {
+                console.log(`------ COMMAND: "${request.payload}" ${new Date().toISOString()} ------`)
+                try {
+                    let stout = await execCommand(request.payload);
+                    response.send(200, { "result": true, "message": stout }, (err) => {
+                        if (err) {
+                            console.error('Unable to send method response: ' + err.toString());
+                        } else {
+                            console.log('response to onCommand sent.');
+                        }
+                    });
+                } catch (e) {
+                    response.send(200, { "result": false, "message": e.message }, (err) => {
+                        if (err) {
+                            console.error('Unable to send method response: ' + err.toString());
+                        } else {
+                            console.log('response to onCommand sent.');
+                        }
+                    });
+                }
             });
 
             client.on('error', (error) => {
