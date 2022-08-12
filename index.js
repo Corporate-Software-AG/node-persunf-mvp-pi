@@ -138,34 +138,16 @@ function startIotHubClient() {
 
             client.onDeviceMethod('onHealthCheck', (request, response) => {
                 console.log("------ HEALTH CHECK " + new Date().toISOString() + " ----------------------------------------------------")
-                response.send(200, { "result": true }, (err) => {
-                    if (err) {
-                        console.error('Unable to send method response: ' + err.toString());
-                    } else {
-                        console.log('response to onHealthCheck sent.');
-                    }
-                });
+                response.send(200, { "result": true }, (err) => err ? console.log('response to onHealthCheck sent.') : console.error('Unable to send method response: ' + err.toString()));
             });
 
             client.onDeviceMethod('onUploadLogs', (request, response) => {
                 console.log('received a request for onUploadLogs');
                 try {
                     uploadLogs();
-                    response.send(200, { "result": true }, (err) => {
-                        if (err) {
-                            console.error('Unable to send method response: ' + err.toString());
-                        } else {
-                            console.log('response to onUploadLogs sent.');
-                        }
-                    });
+                    response.send(200, { "result": true }, (err) => err ? console.log('response to onUploadLogs sent.') : console.error('Unable to send method response: ' + err.toString()));
                 } catch (e) {
-                    response.send(200, { "result": false, "message": e.message }, (err) => {
-                        if (err) {
-                            console.error('Unable to send method response: ' + err.toString());
-                        } else {
-                            console.log('response to onUploadLogs sent.');
-                        }
-                    });
+                    response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onUploadLogs sent.') : console.error('Unable to send method response: ' + err.toString()));
                 }
             });
 
@@ -173,21 +155,20 @@ function startIotHubClient() {
                 console.log(`------ COMMAND: "${request.payload}" ${new Date().toISOString()} ------`)
                 try {
                     let stout = await execCommand(request.payload);
-                    response.send(200, { "result": true, "message": stout }, (err) => {
-                        if (err) {
-                            console.error('Unable to send method response: ' + err.toString());
-                        } else {
-                            console.log('response to onCommand sent.');
-                        }
-                    });
+                    response.send(200, { "result": true, "message": stout }, (err) => err ? console.log('response to onCommand sent.') : console.error('Unable to send method response: ' + err.toString()));
                 } catch (e) {
-                    response.send(200, { "result": false, "message": e.message }, (err) => {
-                        if (err) {
-                            console.error('Unable to send method response: ' + err.toString());
-                        } else {
-                            console.log('response to onCommand sent.');
-                        }
-                    });
+                    response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onCommand sent.') : console.error('Unable to send method response: ' + err.toString()));
+                }
+            });
+
+            client.onDeviceMethod('onRepoUpdate', async (request, response) => {
+                console.log(`------ REPO UPDATE ${new Date().toISOString()} ------`)
+                try {
+                    let stout = await execCommand('/usr/bin/git -C /home/armasuisse/node-persunf-mvp-pi pull');
+                    response.send(200, { "result": true, "message": stout }, (err) => err ? console.log('response to onCommand sent.') : console.error('Unable to send method response: ' + err.toString()));
+                    await execCommand('sudo reboot');
+                } catch (e) {
+                    response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onCommand sent.') : console.error('Unable to send method response: ' + err.toString()));
                 }
             });
 
