@@ -6,8 +6,8 @@ After=multi-user.target
 Type=idle
 EnvironmentFile=/home/armasuisse/node-persunf-mvp-pi/env.conf
 ExecStart=/usr/bin/node /home/armasuisse/node-persunf-mvp-pi/index.js
-StandardOutput=file:/home/armasuisse/logs/servicestart.log
-StandardError=file:/home/armasuisse/logs/error.log
+StandardOutput=append:/home/armasuisse/logs/servicestart.log
+StandardError=append:/home/armasuisse/logs/error.log
 User=armasuisse
 Group=armasuisse
 
