@@ -8,8 +8,12 @@ systemctl daemon-reload
 systemctl enable qrservice.service
 exit
 
+
 sudo apt-get install unclutter
 echo "@unclutter -idle 0" >> ~/.config/lxsession/LXDE-pi/autostart
+
+sudo raspi-config
+-> Display Options -> Screen Blanking -> No
 
 cp _env.conf
 nano env.conf
