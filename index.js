@@ -56,7 +56,11 @@ app.listen(port, async () => {
     }
     startIotHubClient();
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
-    uploadLogs();
+    try {
+        uploadLogs();
+    } catch (e) {
+        console.log("Upload Logs failed: ", e)
+    }
     await startFullScreenApp();
 });
 
@@ -186,34 +190,34 @@ async function startFullScreenApp() {
 }
 
 function uploadLogs() {
-    try {
-        let filePath = "/home/armasuisse/logs/servicestart.log";
-        let errorFilePath = "/home/armasuisse/logs/error.log";
-        let client = Client.fromConnectionString(connectionString, Protocol);
-        uploadLogFile(client, filePath, "-startup")
-        uploadLogFile(client, errorFilePath, "-error")
-    } catch (e) {
-        console.log("Log update failed: ", e)
-    }
+    let filePath = "/home/armasuisse/logs/servicestart.log";
+    let errorFilePath = "/home/armasuisse/logs/error.log";
+    let client = Client.fromConnectionString(connectionString, Protocol);
+    uploadLogFile(client, filePath, "-startup")
+    uploadLogFile(client, errorFilePath, "-error")
 }
 
 function uploadLogFile(client, filePath, postfix) {
-    fs.stat(filePath, (err, fileStats) => {
-        console.log("Upload file: ", filePath);
-        if (err) {
-            console.error('could not read file: ' + err.toString());
-        } else {
-            let fileStream = fs.createReadStream(filePath);
-            client.uploadToBlob(new Date().toISOString() + postfix + '.log', fileStream, fileStats.size, (err, result) => {
-                fileStream.destroy();
-                if (err) {
-                    console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
-                } else {
-                    console.log('Upload successful: ', filePath);
-                }
-            });
-        }
-    });
+    try {
+        fs.stat(filePath, (err, fileStats) => {
+            console.log("Upload file: ", filePath);
+            if (err) {
+                console.error('could not read file: ' + err.toString());
+            } else {
+                let fileStream = fs.createReadStream(filePath);
+                client.uploadToBlob(new Date().toISOString() + postfix + '.log', fileStream, fileStats.size, (err, result) => {
+                    fileStream.destroy();
+                    if (err) {
+                        console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
+                    } else {
+                        console.log('Upload successful: ', filePath);
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        console.log("Upload Log file " + filePath + " failed", e);
+    }
 }
 
 function sleep(ms) {
