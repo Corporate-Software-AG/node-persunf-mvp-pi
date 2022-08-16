@@ -6,6 +6,7 @@ cp qrservice.service /lib/systemd/system/qrservice.service
 chmod 644 /lib/systemd/system/qrservice.service
 systemctl daemon-reload
 systemctl enable qrservice.service
+echo "disable_touchscreen=1" >> /boot/config.txt
 exit
 
 sudo apt-get install unclutter
