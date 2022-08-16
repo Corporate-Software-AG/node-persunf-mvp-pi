@@ -56,11 +56,6 @@ app.listen(port, async () => {
     }
     await startIotHubClient();
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
-    try {
-        await uploadLogs();
-    } catch (e) {
-        console.log("Upload Logs failed: ", e)
-    }
     await startFullScreenApp();
 });
 
