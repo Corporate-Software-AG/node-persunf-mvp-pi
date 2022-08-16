@@ -205,13 +205,13 @@ function uploadLogFile(client, filePath, postfix) {
                 console.error('could not read file: ' + err.toString());
             } else {
                 let fileStream = fs.createReadStream(filePath);
-                client.uploadToBlob(new Date().toISOString() + postfix + '.log', fileStream, fileStats.size, (err, result) => {
-                    fileStream.destroy();
+                await client.uploadToBlob(new Date().toISOString() + postfix + '.log', fileStream, fileStats.size, (err, result) => {
                     if (err) {
                         console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
                     } else {
                         console.log('Upload successful: ', filePath);
                     }
+                    fileStream.destroy();
                 });
             }
         });
