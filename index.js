@@ -54,10 +54,10 @@ app.listen(port, async () => {
     if (!isConnected) {
         await setupCellular();
     }
-    startIotHubClient();
+    await startIotHubClient();
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
     try {
-        uploadLogs();
+        await uploadLogs();
     } catch (e) {
         console.log("Upload Logs failed: ", e)
     }
@@ -119,9 +119,9 @@ async function execDHCPCommand(com) {
     }
 }
 
-function startIotHubClient() {
+async function startIotHubClient() {
     let client = Client.fromConnectionString(connectionString, Protocol);
-    client.open((error) => {
+    client.open(async (error) => {
         if (error) {
             console.error(error);
         } else {
@@ -145,10 +145,10 @@ function startIotHubClient() {
                 response.send(200, { "result": true }, (err) => err ? console.log('response to onHealthCheck sent.') : console.error('Unable to send onHealthCheck response'));
             });
 
-            client.onDeviceMethod('onUploadLogs', (request, response) => {
+            client.onDeviceMethod('onUploadLogs', async (request, response) => {
                 console.log('received a request for onUploadLogs');
                 try {
-                    uploadLogs();
+                    await uploadLogs();
                     response.send(200, { "result": true }, (err) => err ? console.log('response to onUploadLogs sent.') : console.error('Unable to send onUploadLogs response'));
                 } catch (e) {
                     response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onUploadLogs sent.') : console.error('Unable to send onUploadLogs response'));
@@ -189,17 +189,17 @@ async function startFullScreenApp() {
     await execCommands(commands);
 }
 
-function uploadLogs() {
+async function uploadLogs() {
     let filePath = "/home/armasuisse/logs/servicestart.log";
     let errorFilePath = "/home/armasuisse/logs/error.log";
     let client = Client.fromConnectionString(connectionString, Protocol);
-    uploadLogFile(client, filePath, "-startup")
-    uploadLogFile(client, errorFilePath, "-error")
+    await uploadLogFile(client, filePath, "-startup")
+    await uploadLogFile(client, errorFilePath, "-error")
 }
 
-function uploadLogFile(client, filePath, postfix) {
+async function uploadLogFile(client, filePath, postfix) {
     try {
-        fs.stat(filePath, (err, fileStats) => {
+        fs.stat(filePath, async (err, fileStats) => {
             console.log("Upload file: ", filePath);
             if (err) {
                 console.error('could not read file: ' + err.toString());
