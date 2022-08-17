@@ -35,7 +35,7 @@ let deviceConfig = {
     id: deviceId,
     location: "",
     verificationCode: "",
-    displayRotation: "normal"
+    displayRotation: "inverted"
 }
 
 app.get('/', (req, res) => {
@@ -55,10 +55,11 @@ app.listen(port, async () => {
     if (!isConnected) {
         await setupCellular();
     }
+
     await startIotHubClient();
+    if (deviceConfig.displayRotation === 'inverted') await rotateDisplay(deviceConfig.displayRotation);
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
     await startFullScreenApp();
-    if (deviceConfig.displayRotation === 'inverted') await rotateDisplay(deviceConfig.displayRotation);
 });
 
 async function setupCellular() {
