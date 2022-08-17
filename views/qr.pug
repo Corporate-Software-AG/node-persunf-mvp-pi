@@ -28,7 +28,10 @@ script.
     const url = "https://mvp-persunf.azurewebsites.net/" + "?deviceId=" + deviceId + "&deviceLocation=" + deviceLocation + "&verificationCode=" + deviceVerificationCode  
 
     if (deviceVerificationCode === "" || deviceLocation === "" || deviceId === "") {
-        document.getElementById("qr").append("unexpected error. please reboot.");
+        let p = document.createElement("p");
+        p.classList = "error";
+        p.innerHTML = "unexpected error. please reboot."
+        document.getElementById("qr").append(p);
     } else {
         const qrCode = new QRCodeStyling({
             width: 280,
@@ -89,5 +92,9 @@ style.
     }
     .qr {
         min-width: 280px;
+    }
+    .error {
+        color: red;
+        font-weight: 800;
     }
 

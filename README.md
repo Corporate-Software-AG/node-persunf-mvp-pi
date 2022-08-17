@@ -16,7 +16,7 @@ echo "@unclutter -idle 0" >> ~/.config/lxsession/LXDE-pi/autostart
 sudo raspi-config
 -> Display Options -> Screen Blanking -> No
 
-cp _env.conf
+cp _env.conf env.conf
 nano env.conf
 
 mkdir ~/logs
