@@ -163,7 +163,7 @@ async function startIotHubClient() {
             client.onDeviceMethod('onRepoUpdate', async (request, response) => {
                 console.log(`------ REPO UPDATE ${new Date().toISOString()} ------`)
                 try {
-                    let stout = await execCommand('/usr/bin/git -C /home/armasuisse/node-persunf-mvp-pi pull');
+                    let stout = await execCommand('/usr/bin/git -C /home/armasuisse/node-persunf-mvp-pi pull --rebase');
                     response.send(200, { "result": true, "message": stout }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
                 } catch (e) {
                     response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
