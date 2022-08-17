@@ -34,7 +34,8 @@ let deviceId = connectionString.split(";").filter((e) => e.startsWith("DeviceId=
 let deviceConfig = {
     id: deviceId,
     location: "",
-    verificationCode: ""
+    verificationCode: "",
+    displayRotation: "normal"
 }
 
 app.get('/', (req, res) => {
@@ -57,6 +58,7 @@ app.listen(port, async () => {
     await startIotHubClient();
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
     await startFullScreenApp();
+    if (deviceConfig.displayRotation === 'inverted') await rotateDisplay(deviceConfig.displayRotation);
 });
 
 async function setupCellular() {
@@ -169,6 +171,18 @@ async function startIotHubClient() {
                     response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
                 }
             });
+            
+            client.onDeviceMethod('onRotateDisplay', async (request, response) => {
+                console.log(`------ REPO UPDATE ${new Date().toISOString()} ------`)
+                let mode = request.payload;
+                try {
+                    let stout = rotateDisplay(request.mode);
+                    response.send(200, { "result": true, "message": stout }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
+                } catch (e) {
+                    response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
+                }
+            });
+            
 
             client.on('error', (error) => {
                 console.error(error);
@@ -182,6 +196,10 @@ async function startFullScreenApp() {
         'chromium-browser --kiosk http://localhost:8080 --no-sandbox'
     ]
     await execCommands(commands);
+}
+
+async function rotateDisplay(mode) {
+    return await execCommand('DISPLAY=unix:0.0 xrandr --output DSI-1 --rotate ' + mode);
 }
 
 async function uploadLogs() {
