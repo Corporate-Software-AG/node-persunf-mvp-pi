@@ -188,7 +188,7 @@ async function startFullScreenApp() {
 }
 
 async function rotateDisplay(mode) {
-    return await execCommand('DISPLAY=unix:0.0 xrandr --output DSI-1 --rotate ' + mode);
+    await execCommand('DISPLAY=unix:0.0 xrandr --output DSI-1 --rotate ' + mode);
 }
 
 async function uploadLogs() {
