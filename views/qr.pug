@@ -42,7 +42,6 @@ script.
         fetch('/status')
         .then((response) => response.json())
         .then((data) => {
-            console.log(data);
             if( data != deviceVerificationCode) {
                 window.location.reload();
             };
@@ -53,7 +52,7 @@ script.
         setTimeout(() => {   
             checkStatusAndRedirect()
             loop();
-        }, 1000)
+        }, 500)
     }
     loop();
 
@@ -82,5 +81,8 @@ style.
         color: black;
         margin: 0;
         padding: 0;
+    }
+    .qr {
+        min-width: 280px;
     }
 

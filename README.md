@@ -24,6 +24,9 @@ touch ~/logs/servicestart.log
 touch ~/logs/error.log
 
 sudo apt install nodejs
+sudo apt install libqmi-utils
+sudo apt install udhcpc
+
 npm install
 (node index.js)
 sudo reboot
