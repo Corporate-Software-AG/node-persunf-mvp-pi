@@ -33,7 +33,7 @@ let deviceId = connectionString.split(";").filter((e) => e.startsWith("DeviceId=
 
 let deviceConfig = {
     id: deviceId,
-    location: "XXX",
+    location: "",
     verificationCode: ""
 }
 
@@ -129,8 +129,8 @@ async function startIotHubClient() {
                     console.log("----------------------------- TWIN CREATED " + new Date().toISOString() + " -----------------------------")
                     twin.on('properties.desired', (delta) => {
                         console.log('TWIN Properties:', JSON.stringify(delta));
-                        deviceConfig.location = delta.mzr;
-                        deviceConfig.verificationCode = delta.verificationCode
+                        if (delta.mzr) deviceConfig.location = delta.mzr;
+                        if (delta.verificationCode) deviceConfig.verificationCode = delta.verificationCode
                     });
                 }
             })
