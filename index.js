@@ -33,7 +33,7 @@ let deviceId = connectionString.split(";").filter((e) => e.startsWith("DeviceId=
 
 let deviceConfig = {
     id: deviceId,
-    location: "",
+    location: "XXX",
     verificationCode: ""
 }
 
