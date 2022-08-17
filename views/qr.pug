@@ -29,11 +29,9 @@ script.
 
     if (deviceVerificationCode === "" || deviceLocation === "" || deviceId === "") {
         let p = document.createElement("p");
-        let br = dosument.createElement("br")
         p.classList = "error";
-        p.innerHTML = "error. device twin incomplete or not readable."
-        document.getElementById("qr").appendChild(br);
-        document.getElementById("qr").appendChild(p);
+        p.innerHTML = "error. device twin incomplete or not readable.";
+        document.getElementById("qr").append(p);
     } else {
         const qrCode = new QRCodeStyling({
             width: 280,
