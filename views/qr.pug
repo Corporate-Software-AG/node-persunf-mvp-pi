@@ -26,17 +26,22 @@ script.
     const deviceId = document.getElementById("deviceId").innerHTML
     const deviceLocation = document.getElementById("deviceLocation").innerHTML
     const url = "https://mvp-persunf.azurewebsites.net/" + "?deviceId=" + deviceId + "&deviceLocation=" + deviceLocation + "&verificationCode=" + deviceVerificationCode  
-    const qrCode = new QRCodeStyling({
-        width: 280,
-        height: 280,
-        data: url,
-        image: "https://mvppersunf.blob.core.windows.net/images/Logo-Schweiz.png",
-        dotsOptions: {
-        color: "#ff0000",
-        type: "dots"
-        },
-    });
-    qrCode.append(document.getElementById("qr"));
+
+    if (deviceVerificationCode === "" || deviceLocation === "" || deviceId === "") {
+        document.getElementById("qr").append("unexpected error. please reboot.");
+    } else {
+        const qrCode = new QRCodeStyling({
+            width: 280,
+            height: 280,
+            data: url,
+            image: "https://mvppersunf.blob.core.windows.net/images/Logo-Schweiz.png",
+            dotsOptions: {
+            color: "#ff0000",
+            type: "dots"
+            },
+        });
+        qrCode.append(document.getElementById("qr"));
+    }
 
     function checkStatusAndRedirect() {
         fetch('/status')
