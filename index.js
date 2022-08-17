@@ -35,7 +35,7 @@ let deviceConfig = {
     id: deviceId,
     location: "",
     verificationCode: "",
-    displayRotation: "inverted"
+    displayRotation: "normal"
 }
 
 app.get('/', (req, res) => {
