@@ -171,18 +171,6 @@ async function startIotHubClient() {
                     response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
                 }
             });
-            
-            client.onDeviceMethod('onRotateDisplay', async (request, response) => {
-                console.log(`------ REPO UPDATE ${new Date().toISOString()} ------`)
-                let mode = request.payload;
-                try {
-                    let stout = rotateDisplay(request.mode);
-                    response.send(200, { "result": true, "message": stout }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
-                } catch (e) {
-                    response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
-                }
-            });
-            
 
             client.on('error', (error) => {
                 console.error(error);
