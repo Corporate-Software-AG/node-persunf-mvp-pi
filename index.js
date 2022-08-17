@@ -132,7 +132,8 @@ async function startIotHubClient() {
                     twin.on('properties.desired', (delta) => {
                         console.log('TWIN Properties:', JSON.stringify(delta));
                         if (delta.mzr) deviceConfig.location = delta.mzr;
-                        if (delta.verificationCode) deviceConfig.verificationCode = delta.verificationCode
+                        if (delta.verificationCode) deviceConfig.verificationCode = delta.verificationCode;
+                        if (delta.displayRotation) deviceConfig.displayRotation = delta.displayRotation;
                     });
                 }
             })
