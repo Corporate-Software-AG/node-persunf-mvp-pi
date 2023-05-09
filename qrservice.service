@@ -1,10 +1,10 @@
 [Unit]
 Description=My QR Service
-After=multi-user.target
+After=cellular.target
 
 [Service]
 Type=idle
-EnvironmentFile=/home/armasuisse/node-persunf-mvp-pi/env.conf
+EnvironmentFile=/boot/env.conf
 ExecStart=/usr/bin/node /home/armasuisse/node-persunf-mvp-pi/index.js
 StandardOutput=append:/home/armasuisse/logs/servicestart.log
 StandardError=append:/home/armasuisse/logs/error.log
