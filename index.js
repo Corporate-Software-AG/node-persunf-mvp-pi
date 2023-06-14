@@ -55,6 +55,7 @@ app.get('/status', (req, res) => {
 app.listen(port, async () => {
     console.log("----------------------------- START " + new Date().toISOString() + " -----------------------------")
     console.log(`This app is listening at http://localhost:${port}`)
+    await startFullScreenApp();
     let isConnected = !!await require('dns').promises.resolve('azure.com').catch(() => { });
     console.log("Connected to Internet: ", isConnected)
     if (!isConnected) {
@@ -64,7 +65,6 @@ app.listen(port, async () => {
     await startIotHubClient();
     if (deviceConfig.displayRotation === 'inverted') await rotateDisplay(deviceConfig.displayRotation);
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
-    await startFullScreenApp();
 });
 
 async function setupCellular() {
