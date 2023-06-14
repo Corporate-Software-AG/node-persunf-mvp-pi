@@ -7,7 +7,7 @@ html
         header 
             .container.p-3
                 p.logo
-                    img(src="https://mvppersunf.blob.core.windows.net/images/Logo-Schweizerische-Eidgenossenschaft.png")
+                    img(src="https:///" + device.strgName + ".blob.core.windows.net/images/Logo-Schweizerische-Eidgenossenschaft.png")
         section 
             div(class="container") 
                 p= "Bitte scannen Sie den QR Code"
@@ -19,13 +19,20 @@ html
         p(id="deviceId")= device.id
         p(id="deviceVerificationCode")= device.verificationCode
         p(id="deviceLocation")= device.location
+        p(id="strgName")= device.strgName
+        p(id="webUrl")= device.webUrl
+
         script(src='https://unpkg.com/qr-code-styling/lib/qr-code-styling.js')
 
 script.
     const deviceVerificationCode = document.getElementById("deviceVerificationCode").innerHTML
     const deviceId = document.getElementById("deviceId").innerHTML
     const deviceLocation = document.getElementById("deviceLocation").innerHTML
-    const url = "https://mvp-persunf.azurewebsites.net/" + "?deviceId=" + deviceId + "&deviceLocation=" + deviceLocation + "&verificationCode=" + deviceVerificationCode  
+    const strgName = document.getElementById("strgName").innerHTML
+    const webUrl = document.getElementById("webUrl").innerHTML
+
+
+    const url = webUrl + "?deviceId=" + deviceId + "&deviceLocation=" + deviceLocation + "&verificationCode=" + deviceVerificationCode  
 
     if (deviceVerificationCode === "" || deviceLocation === "" || deviceId === "") {
         let p = document.createElement("p");
@@ -39,7 +46,7 @@ script.
             width: 280,
             height: 280,
             data: url,
-            image: "https://mvppersunf.blob.core.windows.net/images/Logo-Schweiz.png",
+            image: "https://" + strgName + ".blob.core.windows.net/images/Logo-Schweiz.png",
             dotsOptions: {
             color: "#ff0000",
             type: "dots"

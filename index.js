@@ -18,7 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 const connectionString = process.env.DEVICE_CONNECTION_STRING;
 const pin = process.env.PIN;
 
-
 if (!connectionString) {
     console.log('Configuration incomplete! Set the DEVICE_CONNECTION_STRING environment variables.');
     process.exit(-1);
@@ -35,12 +34,18 @@ let deviceConfig = {
     id: deviceId,
     location: "",
     verificationCode: "",
-    displayRotation: "normal"
+    displayRotation: "normal",
+    strgName: "",
+    webUrl: ""
 }
 
 app.get('/', (req, res) => {
     state = { "complete": false }
-    res.render("qr", { title: "QR", device: deviceConfig });
+    if (deviceConfig.verificationCode == "") {
+        res.render("loading", { title: "loading" });
+    } else {
+        res.render("qr", { title: "QR", device: deviceConfig });
+    }
 })
 
 app.get('/status', (req, res) => {
@@ -135,6 +140,8 @@ async function startIotHubClient() {
                         if (delta.mzr) deviceConfig.location = delta.mzr;
                         if (delta.verificationCode) deviceConfig.verificationCode = delta.verificationCode;
                         if (delta.displayRotation) deviceConfig.displayRotation = delta.displayRotation;
+                        if (delta.strgName) deviceConfig.strgName = delta.strgName;
+                        if (delta.webUrl) deviceConfig.webUrl = delta.webUrl;
                     });
                 }
             })
