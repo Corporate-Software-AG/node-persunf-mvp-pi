@@ -55,7 +55,6 @@ app.get('/status', (req, res) => {
 app.listen(port, async () => {
     console.log("----------------------------- START " + new Date().toISOString() + " -----------------------------")
     console.log(`This app is listening at http://localhost:${port}`)
-    await startFullScreenApp();
     let isConnected = !!await require('dns').promises.resolve('azure.com').catch(() => { });
     console.log("Connected to Internet: ", isConnected)
     if (!isConnected) {
@@ -65,6 +64,7 @@ app.listen(port, async () => {
     await startIotHubClient();
     if (deviceConfig.displayRotation === 'inverted') await rotateDisplay(deviceConfig.displayRotation);
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
+    await startFullScreenApp();
 });
 
 async function setupCellular() {
@@ -174,7 +174,7 @@ async function startIotHubClient() {
             client.onDeviceMethod('onRepoUpdate', async (request, response) => {
                 console.log(`------ REPO UPDATE ${new Date().toISOString()} ------`)
                 try {
-                    let stout = await execCommand('/usr/bin/git -C /home/armasuisse/node-persunf-mvp-pi pull --rebase');
+                    let stout = await execCommand('/usr/bin/git -C /home/armasuisse/node-persunf-mvp-pi reset --hard');
                     response.send(200, { "result": true, "message": stout }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));
                 } catch (e) {
                     response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onRepoUpdate sent.') : console.error('Unable to send onRepoUpdate response'));

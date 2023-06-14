@@ -9,19 +9,10 @@ html
                 p loading...
 
 script.
-    function checkStatusAndRedirect() {
-        fetch('/status')
-        .then((response) => response.json())
-        .then((data) => {
-            if( data != "") {
-                window.location.reload();
-            };
-        }).catch((err) => console.warn('Something went wrong.', err));
-    }
 
     function loop() {         
         setTimeout(() => {   
-            checkStatusAndRedirect()
+            window.location.reload();
             loop();
         }, 500)
     }
