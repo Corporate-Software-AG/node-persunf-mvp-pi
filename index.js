@@ -40,7 +40,15 @@ let deviceConfig = {
 }
 
 app.get('/', (req, res) => {
-    state = { "complete": false }
+    let isConnected = await isConnected();
+    if (!isConnected) {
+        res.render("error", { title: "ERROR", message: "Not Connected", device: deviceConfig })
+    } else {
+        console.log("----------------------------- REDO Cellular Setup " + new Date().toISOString() + " -----------------------------")
+        await setupCellular()
+        console.log("----------------------------- REDO Start IoT Hub Client " + new Date().toISOString() + " -----------------------------")
+        await startIotHubClient();
+    }
     if (deviceConfig.verificationCode == "") {
         res.render("loading", { title: "loading" });
     } else {
@@ -48,24 +56,27 @@ app.get('/', (req, res) => {
     }
 })
 
-app.get('/status', (req, res) => {
+app.get('/verificationCode', (req, res) => {
     res.json(deviceConfig.verificationCode);
 })
 
 app.listen(port, async () => {
     console.log("----------------------------- START " + new Date().toISOString() + " -----------------------------")
     console.log(`This app is listening at http://localhost:${port}`)
-    let isConnected = !!await require('dns').promises.resolve('azure.com').catch(() => { });
+    let isConnected = await isConnected();
     console.log("Connected to Internet: ", isConnected)
     if (!isConnected) {
         await setupCellular();
     }
 
     await startIotHubClient();
-    if (deviceConfig.displayRotation === 'inverted') await rotateDisplay(deviceConfig.displayRotation);
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
     await startFullScreenApp();
 });
+
+async function isConnected() {
+    return !!await require('dns').promises.resolve('azure.com').catch(() => { });
+}
 
 async function setupCellular() {
     try {
@@ -85,7 +96,6 @@ async function setupCellular() {
         console.log("Retry Cellular Setup")
         await setupCellular();
     }
-
 }
 
 async function execCommands(commands) {
@@ -143,6 +153,7 @@ async function startIotHubClient() {
                         if (delta.strgName) deviceConfig.strgName = delta.strgName;
                         if (delta.webUrl) deviceConfig.webUrl = delta.webUrl;
                     });
+                    await rotateDisplay(deviceConfig.displayRotation);
                 }
             })
 

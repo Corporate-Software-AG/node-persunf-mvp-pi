@@ -55,8 +55,8 @@ script.
         qrCode.append(document.getElementById("qr"));
     }
 
-    function checkStatusAndRedirect() {
-        fetch('/status')
+    function checkVerificationCodeAndRedirect() {
+        fetch('/verificationCode')
         .then((response) => response.json())
         .then((data) => {
             if( data != deviceVerificationCode) {
@@ -67,7 +67,7 @@ script.
 
     function loop() {         
         setTimeout(() => {   
-            checkStatusAndRedirect()
+            checkVerificationCodeAndRedirect()
             loop();
         }, 500)
     }
