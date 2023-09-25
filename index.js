@@ -16,15 +16,9 @@ app.use('/favicon.ico', express.static('favicon.ico'));
 app.use(express.urlencoded({ extended: true }));
 
 const connectionString = process.env.DEVICE_CONNECTION_STRING;
-const pin = process.env.PIN;
 
 if (!connectionString) {
     console.log('Configuration incomplete! Set the DEVICE_CONNECTION_STRING environment variables.');
-    process.exit(-1);
-}
-
-if (!pin) {
-    console.log('Configuration incomplete! Set the PIN environment variables.');
     process.exit(-1);
 }
 
@@ -39,19 +33,18 @@ let deviceConfig = {
     webUrl: ""
 }
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     let isConnected = await isConnected();
     if (!isConnected) {
+        console.log("Not Connected")
+        console.log("Error Page rendered")
         res.render("error", { title: "ERROR", message: "Not Connected", device: deviceConfig })
-    } else {
-        console.log("----------------------------- REDO Cellular Setup " + new Date().toISOString() + " -----------------------------")
-        await setupCellular()
-        console.log("----------------------------- REDO Start IoT Hub Client " + new Date().toISOString() + " -----------------------------")
-        await startIotHubClient();
     }
     if (deviceConfig.verificationCode == "") {
+        console.log("Loading page rendered")
         res.render("loading", { title: "loading" });
     } else {
+        console.log("QR Page rendered")
         res.render("qr", { title: "QR", device: deviceConfig });
     }
 })
@@ -65,37 +58,13 @@ app.listen(port, async () => {
     console.log(`This app is listening at http://localhost:${port}`)
     let isConnected = await isConnected();
     console.log("Connected to Internet: ", isConnected)
-    if (!isConnected) {
-        await setupCellular();
-    }
-
     await startIotHubClient();
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
-    await startFullScreenApp();
+    //await startFullScreenApp();
 });
 
 async function isConnected() {
     return !!await require('dns').promises.resolve('azure.com').catch(() => { });
-}
-
-async function setupCellular() {
-    try {
-        let commands = [
-            "sudo qmicli -d /dev/cdc-wdm0 --dms-set-operating-mode='online'",
-            'sudo ip link set wwan0 down',
-            'echo Y | sudo tee /sys/class/net/wwan0/qmi/raw_ip',
-            'sudo ip link set wwan0 up',
-            'sudo qmicli --device=/dev/cdc-wdm0 --uim-verify-pin=PIN1,' + pin,
-            'sudo qmicli --device=/dev/cdc-wdm0 --device-open-proxy --wds-start-network="ip-type=4,apn=gprs.swisscom.ch" --client-no-release-cid',
-        ]
-        await execCommands(commands);
-        await execDHCPCommand('sudo udhcpc -i wwan0')
-    } catch (e) {
-        console.error(e);
-        sleep(2000);
-        console.log("Retry Cellular Setup")
-        await setupCellular();
-    }
 }
 
 async function execCommands(commands) {
@@ -123,15 +92,6 @@ async function execCommand(com) {
     }
 }
 
-async function execDHCPCommand(com) {
-    let { stdout, stderr } = await exec(com)
-    if (stderr) {
-        console.log("Err. Log: ", stderr)
-    } else {
-        console.log("Successful: ", stdout)
-    }
-}
-
 async function startIotHubClient() {
     let client = Client.fromConnectionString(connectionString, Protocol);
     client.open(async (error) => {
@@ -140,7 +100,7 @@ async function startIotHubClient() {
         } else {
             console.log("----------------------------- CONNECTED TO IOT HUB " + new Date().toISOString() + " -----------------------------")
 
-            client.getTwin((error, twin) => {
+            client.getTwin(async (error, twin) => {
                 if (error) {
                     console.error('could not get twin')
                 } else {
