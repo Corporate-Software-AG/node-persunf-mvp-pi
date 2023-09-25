@@ -34,8 +34,8 @@ let deviceConfig = {
 }
 
 app.get('/', async (req, res) => {
-    let isConnected = await isConnected();
-    if (!isConnected) {
+    let connected = await isConnected();
+    if (!connected) {
         console.log("Not Connected")
         console.log("Error Page rendered")
         res.render("error", { title: "ERROR", message: "Not Connected", device: deviceConfig })
@@ -56,8 +56,8 @@ app.get('/verificationCode', (req, res) => {
 app.listen(port, async () => {
     console.log("----------------------------- START " + new Date().toISOString() + " -----------------------------")
     console.log(`This app is listening at http://localhost:${port}`)
-    let isConnected = await isConnected();
-    console.log("Connected to Internet: ", isConnected)
+    let connected = await isConnected();
+    console.log("Connected to Internet: ", connected)
     await startIotHubClient();
     console.log("----------------------------- SETUP COMPLETE " + new Date().toISOString() + " -----------------------------")
     //await startFullScreenApp();
