@@ -5,11 +5,11 @@ After=cellular.target
 [Service]
 Type=idle
 EnvironmentFile=/boot/env.conf
-ExecStart=/usr/bin/node /home/armasuisse/node-persunf-mvp-pi/index.js
-StandardOutput=append:/home/armasuisse/logs/servicestart.log
-StandardError=append:/home/armasuisse/logs/error.log
-User=armasuisse
-Group=armasuisse
+ExecStart=/usr/bin/node /home/epes/node-persunf-mvp-pi/index.js
+StandardOutput=append:/home/epes/logs/servicestart.log
+StandardError=append:/home/epes/logs/error.log
+User=epes
+Group=epes
 
 [Install]
 WantedBy=multi-user.target
