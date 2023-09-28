@@ -56,6 +56,10 @@ app.get('/verificationCode', (req, res) => {
 app.listen(port, async () => {
     console.log("----------------------------- START " + new Date().toISOString() + " -----------------------------")
     console.log(`This app is listening at http://localhost:${port}`)
+    while (!await isConnected()) {
+        console.log("Not Connected")
+        await sleep(1000);
+    }
     let connected = await isConnected();
     console.log("Connected to Internet: ", connected)
     await startIotHubClient();
@@ -122,16 +126,6 @@ async function startIotHubClient() {
                 response.send(200, { "result": true }, (err) => err ? console.log('response to onHealthCheck sent.') : console.error('Unable to send onHealthCheck response'));
             });
 
-            client.onDeviceMethod('onUploadLogs', async (request, response) => {
-                console.log('received a request for onUploadLogs');
-                try {
-                    await uploadLogs();
-                    response.send(200, { "result": true }, (err) => err ? console.log('response to onUploadLogs sent.') : console.error('Unable to send onUploadLogs response'));
-                } catch (e) {
-                    response.send(200, { "result": false, "message": e.message }, (err) => err ? console.log('response to onUploadLogs sent.') : console.error('Unable to send onUploadLogs response'));
-                }
-            });
-
             client.onDeviceMethod('onCommand', async (request, response) => {
                 console.log(`------ COMMAND: "${request.payload}" ${new Date().toISOString()} ------`)
                 try {
@@ -168,37 +162,6 @@ async function startFullScreenApp() {
 
 async function rotateDisplay(mode) {
     await execCommand('DISPLAY=unix:0.0 xrandr --output DSI-1 --rotate ' + mode);
-}
-
-async function uploadLogs() {
-    let filePath = "/home/armasuisse/logs/servicestart.log";
-    let errorFilePath = "/home/armasuisse/logs/error.log";
-    let client = Client.fromConnectionString(connectionString, Protocol);
-    await uploadLogFile(client, filePath, "-startup")
-    await uploadLogFile(client, errorFilePath, "-error")
-}
-
-async function uploadLogFile(client, filePath, postfix) {
-    try {
-        fs.stat(filePath, async (err, fileStats) => {
-            console.log("Upload file: ", filePath);
-            if (err) {
-                console.error('could not read file: ' + err.toString());
-            } else {
-                let fileStream = fs.createReadStream(filePath);
-                await client.uploadToBlob(new Date().toISOString() + postfix + '.log', fileStream, fileStats.size, (err, result) => {
-                    if (err) {
-                        console.error('error uploading file: ' + err.constructor.name + ': ' + err.message);
-                    } else {
-                        console.log('Upload successful: ', filePath);
-                    }
-                    fileStream.destroy();
-                });
-            }
-        });
-    } catch (e) {
-        console.log("Upload Log file " + filePath + " failed", e);
-    }
 }
 
 function sleep(ms) {
